@@ -15,9 +15,6 @@ public class main {
         File csvFile = new File("data/customers.csv");
         FileWriter fileWriter = new FileWriter(csvFile);
 
-        // Write header to csv file
-        fileWriter.write("ID,Name,Age,Gender,CountryCode,Salary\n");
-
         // Random number generator object
         Random rand = new Random();
 
@@ -46,9 +43,6 @@ public class main {
     public static void generateTransactionData() throws IOException {
         File csvFile = new File("data/transactions.csv");
         FileWriter fileWriter = new FileWriter(csvFile);
-
-        // Write header to csv file
-        fileWriter.write("TransID,CustID,TransTotal,TransNumItems,TransDesc\n");
 
         // Random number generator object
         Random rand = new Random();
