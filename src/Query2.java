@@ -71,7 +71,7 @@ public class Query2 {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "Query1");
+        Job job = Job.getInstance(conf, "Query2");
         job.setJarByClass(Query2.class);
         job.setMapperClass(Query2.CustomerMapper.class);
         job.setMapOutputKeyClass(Text.class);
