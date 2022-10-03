@@ -10,52 +10,54 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+
+//referenced https://www.edureka.co/blog/mapreduce-example-reduce-side-join/
 public class Query3 {
 
-    // Mapper for Customer
+    // mapper for Customer
     public static class CustomerMapper extends Mapper<Object, Text, Text, Text> {
-        private Text output_key = new Text();
-        private Text output_value = new Text();
+        private Text outKey = new Text();
+        private Text outValue = new Text();
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String[] str = value.toString().split(",");
             String ID = str[0];
             String name = str[1];
             String salary = str[5];
-            output_key.set(ID);
-            output_value.set(String.join(",", "customer", name, salary));
-            context.write(output_key, output_value);
+            outKey.set(ID);
+            outValue.set(String.join(",", "customer", name, salary));
+            context.write(outKey, outValue);
         }
     }
 
-    // Mapper for Transactions
+    // mapper for Transactions
     public static class TransactionMapper
             extends Mapper<Object, Text, Text, Text> {
 
-        private Text outputKey = new Text();
-        private Text outputValue = new Text();
+        private Text outKey = new Text();
+        private Text outValue = new Text();
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String[] str = value.toString().split(",");
             String ID = str[1];
             String count = "1";
             String totalSum = str[2];
             String numItems = str[3];
-            outputKey.set(ID);
-            outputValue.set(String.join(",", "transaction", count, totalSum, numItems));
-            context.write(outputKey, outputValue);
+            outKey.set(ID);
+            outValue.set(String.join(",", "transaction", count, totalSum, numItems));
+            context.write(outKey, outValue);
         }
     }
     //combine inputs from both mapper's key value pair
     public static class Combiner extends Reducer<Text, Text, Text, Text>{
-        private Text outputKey = new Text();
-        private Text outputValue = new Text();
+        private Text outKey = new Text();
+        private Text outValue = new Text();
 
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             int numTransactions = 0;
             float totalSum = 0;
             int minItem = 10;
-            String customerName = "";
-            String customerSalary = "";
+            String name = "";
+            String salary = "";
             boolean flag = false;
             for (Text val : values) {
                 String[] str = val.toString().split(",");
@@ -65,31 +67,31 @@ public class Query3 {
                     minItem = Math.min(minItem,Integer.parseInt(str[3]));
                     flag = true;
                 }else if (str[0].equals("customer")){
-                    customerName = str[1];
-                    customerSalary = str[2];
+                    name = str[1];
+                    salary = str[2];
                 }
             }
             if(flag){
-                outputKey.set(key);
-                outputValue.set(String.join(",", "transaction", String.valueOf(numTransactions), String.valueOf(totalSum), String.valueOf(minItem)));
+                outKey.set(key);
+                outValue.set(String.join(",", "transaction", String.valueOf(numTransactions), String.valueOf(totalSum), String.valueOf(minItem)));
             }else{
-                outputKey.set(key);
-                outputValue.set(String.join(",", "customer", customerName, customerSalary));
+                outKey.set(key);
+                outValue.set(String.join(",", "customer", name, salary));
             }
-            context.write(outputKey, outputValue);
+            context.write(outKey, outValue);
         }
     }
 
     // reduces both mapper and combiner input into final string form
     public static class FinalReducer extends Reducer<Text, Text, Text, NullWritable> {
 
-        private Text outputKey = new Text();
+        private Text outKey = new Text();
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             float totalSum = 0;
             int numTransactions = 0;
             int minItem = 10;
-            String customerName = "";
-            String customerSalary = "";
+            String name = "";
+            String salary = "";
             for (Text val : values) {
                 String[] str = val.toString().split(",");
                 //checks if from transaction
@@ -100,12 +102,12 @@ public class Query3 {
                 }
                 //checks if from customer
                 else if (str[0].equals("customer")){
-                    customerName = str[1];
-                    customerSalary = str[2];
+                    name = str[1];
+                    salary = str[2];
                 }
             }
-            outputKey.set(String.join(",", key.toString(), customerName, customerSalary, String.valueOf(numTransactions), String.valueOf(totalSum), String.valueOf(minItem)));
-            context.write(outputKey, NullWritable.get());
+            outKey.set(String.join(",", key.toString(), name, salary, String.valueOf(numTransactions), String.valueOf(totalSum), String.valueOf(minItem)));
+            context.write(outKey, NullWritable.get());
         }
     }
 

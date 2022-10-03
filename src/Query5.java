@@ -15,8 +15,11 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.HashMap;
 
+//referenced https://www.edureka.co/blog/mapreduce-example-reduce-side-join/
 public class Query5 {
+    // mapper for Transaction
     public static class TransactionMapper extends Mapper<LongWritable, Text, Text, Text> {
+        //ageRange identifier
         private int ageRange(int age){
             if (age >= 10 && age < 20)
                 return 1;
@@ -35,6 +38,7 @@ public class Query5 {
         //customer data as a hashmap
         private HashMap<Integer, String[]> customer = new HashMap<>();
 
+        //setup processes customerData
         public void setup(Context context) throws IOException, InterruptedException{
             URI[] cFiles = context.getCacheFiles();
             if (cFiles != null && cFiles.length > 0)
@@ -44,10 +48,10 @@ public class Query5 {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(fs.open(path)));
                 String line = null;
                 while((line = reader.readLine()) != null) {
-                    String[] cFragment = line.split(",");
-                    Integer ID = Integer.parseInt(cFragment[0]);
-                    Integer age = ageRange(Integer.parseInt(cFragment[2]));
-                    String gender = cFragment[3];
+                    String[] str = line.split(",");
+                    Integer ID = Integer.parseInt(str[0]);
+                    Integer age = ageRange(Integer.parseInt(str[2]));
+                    String gender = str[3];
                     String[] ls = {Integer.toString(age), gender};
                     customer.put(ID,ls);
                 }
@@ -56,6 +60,7 @@ public class Query5 {
         private Text outKey = new Text();
         private Text outVal = new Text();
 
+        // mapper for Customer
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] custom = value.toString().split(",");
             String[] ls = customer.get(Integer.parseInt(custom[1]));
@@ -67,6 +72,7 @@ public class Query5 {
 
 
     public static class AgeReducer extends Reducer<Text, Text, Text, Text> {
+        //age hashmap
         private HashMap<Integer, String> ageRange = new HashMap<Integer, String>() {{
             put(0, "Error");
             put(1, "[10, 20)");
@@ -79,8 +85,7 @@ public class Query5 {
 
         private Text outKey = new Text();
 
-        // Reducer
-        // returns key ageRange (e.g. '[10,20)') value: (gender, min, max, avg)
+        // Reducer for transaction and age range
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             double min = 5555.55;
             double max = 0.0;
