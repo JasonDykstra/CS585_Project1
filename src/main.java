@@ -49,13 +49,12 @@ public class main {
 
         for(int i = 0; i < 5000000; i++){
             int transID = i + 1;
-            int custID = rand.nextInt(50000) + 1;
             float transTotal = (rand.nextFloat() * 990) + 10;
             int transNumItems = rand.nextInt(10) + 1;
             String transDesc = getSaltString(50);
 
             // Concat all the info into one line
-            String csvLine = String.format("%s,%s,%s,%s,%s\n", transID, custID, transTotal, transNumItems, transDesc);
+            String csvLine = String.format("%s,%s,%s,%s\n", transID, transTotal, transNumItems, transDesc);
 
             // Write to csv
             fileWriter.write(csvLine);
