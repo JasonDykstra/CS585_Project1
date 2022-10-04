@@ -3,6 +3,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
+
+// Customer data headers: ID, Name, Age, Gender, Country Code, Salary
+// Transaction data headers: ID, Total, NumItems, Description
+
 public class main {
 
     public static void main(String[] args) throws IOException {
