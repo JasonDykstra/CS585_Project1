@@ -85,13 +85,15 @@ public class Query2Temp {
             {
                 outputStr = String.join(",", "transaction", String.valueOf(numTransactions), String.valueOf(totalSum));
             }
-            outKey.set(outputStr);
-            context.write(outKey, outValue);
+
+            outValue.set(outputStr);
+            context.write(key, outValue);
         }
     }
 
     public static class SumTransactionReducer extends Reducer<Text, Text, Text, NullWritable> {
         private Text outKey = new Text();
+        private Text outValue = new Text();
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             // Important: All key-value pairs with the same key will end up in the same reducer class, so we can pass
             // info from multiple mappers with different output information to the same reducer to aggregate the data.
@@ -122,23 +124,25 @@ public class Query2Temp {
                 // no customer, should not output
                 outputStr = "";
             }
+
             outKey.set(outputStr);
+
             context.write(outKey, NullWritable.get());
         }
     }
     public static void main(String[] args) throws Exception {
         args = new String[3];
-        args[0] = "/Users/maxine/Files/cs585/CS585_Project1/data/customers.csv";
-        args[1] = "/Users/maxine/Files/cs585/CS585_Project1/data/transactions.csv";
-        args[2] = "/Users/maxine/Files/cs585/CS585_Project1/data/output1.txt";
+        args[0] = "data/customers.csv";
+        args[1] = "data/transactions.csv";
+        args[2] = "data/query2tempoutput";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Query2");
         job.setJarByClass(Query2Temp.class);
 //        job.setMapperClass(Query2.CustomerMapper.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
-        job.setCombinerClass(Query2.SumTransactionCombiner.class);
-        job.setReducerClass(Query2.SumTransactionReducer.class);
+        job.setCombinerClass(Query2Temp.SumTransactionCombiner.class);
+        job.setReducerClass(Query2Temp.SumTransactionReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
