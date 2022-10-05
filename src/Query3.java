@@ -31,9 +31,7 @@ public class Query3 {
     }
 
     // mapper for Transactions
-    public static class TransactionMapper
-            extends Mapper<Object, Text, Text, Text> {
-
+    public static class TransactionMapper extends Mapper<Object, Text, Text, Text> {
         private Text outKey = new Text();
         private Text outValue = new Text();
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -83,7 +81,7 @@ public class Query3 {
     }
 
     // reduces both mapper and combiner input into final string form
-    public static class FinalReducer extends Reducer<Text, Text, Text, NullWritable> {
+    public static class BothReducer extends Reducer<Text, Text, Text, NullWritable> {
 
         private Text outKey = new Text();
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
@@ -114,15 +112,16 @@ public class Query3 {
     // Main Function
     public static void main(String[] args) throws Exception {
 //        args = new String[3];
-//        args[0] = "/Users/maxine/Files/cs585/Project1/input/customers.csv";
-//        args[1] = "/Users/maxine/Files/cs585/Project1/input/transactions.csv";
-//        args[2] = "/Users/maxine/Files/cs585/Project1/output/output2.txt";
+//        args[0] = "/Users/maxine/Files/cs585/CS585_Project1/data/customers.csv";
+//        args[1] = "/Users/maxine/Files/cs585/CS585_Project1/data/transactions.csv";
+//        args[2] = "/Users/maxine/Files/cs585/CS585_Project1/data/output3.txt";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Query3");
 
         job.setJarByClass(Query3.class);
         job.setCombinerClass(Combiner.class);
-        job.setReducerClass(FinalReducer.class);
+        job.setReducerClass(BothReducer.class);
+
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);

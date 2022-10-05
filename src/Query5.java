@@ -110,9 +110,9 @@ public class Query5 {
     // Main Function
     public static void main(String[] args) throws Exception {
 //        args = new String[3];
-//        args[0] = "/Users/maxine/Files/cs585/Project1/input/customers.csv";
-//        args[1] = "/Users/maxine/Files/cs585/Project1/input/transactions.csv";
-//        args[2] = "/Users/maxine/Files/cs585/Project1/output/output3.txt";
+//        args[0] = "/Users/maxine/Files/cs585/CS585_Project1/data/customers.csv";
+//        args[1] = "/Users/maxine/Files/cs585/CS585_Project1/data/transactions.csv";
+//        args[2] = "/Users/maxine/Files/cs585/CS585_Project1/data/output5.txt";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf);
 

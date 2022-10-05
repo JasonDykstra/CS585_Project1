@@ -1,4 +1,3 @@
-import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -8,10 +7,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import java.io.IOException;
+
 public class Query1 {
     public static class AgeMapper extends Mapper<Object, Text, IntWritable, Text>{
         //new customer
         private final static Text customer = new Text();
+        //mapper to check for age range
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String customerString = value.toString();
             String[] customerData = customerString.split(",");
@@ -23,8 +25,12 @@ public class Query1 {
             }
         }
     }
-
+    //no need for reduce
     public static void main(String[] args) throws Exception {
+//        args = new String[3];
+//        args[0] = "/Users/maxine/Files/cs585/CS585_Project1/data/customers.csv";
+//        args[1] = "/Users/maxine/Files/cs585/CS585_Project1/data/transactions.csv";
+//        args[2] = "/Users/maxine/Files/cs585/CS585_Project1/data/output1.txt";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Query1");
         job.setJarByClass(Query1.class);
