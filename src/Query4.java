@@ -4,6 +4,7 @@ import java.util.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -58,9 +59,8 @@ public class Query4 {
 
     }
 
-    public static class SumTransactionReducer extends Reducer<Text, Text, Text, Text> {
+    public static class SumTransactionReducer extends Reducer<Text, Text, Text, NullWritable> {
         private final static Text outKey = new Text();
-        private final static Text outValue = new Text();
 
         // Hash maps to keep track of per-area-code data
         private static HashMap<Integer, Integer> areaCodeCounts = new HashMap<>();
@@ -120,10 +120,9 @@ public class Query4 {
                 double min = areaCodeMin.get(hkey);
                 double max = areaCodeMax.get(hkey);
 
-                String outString = String.join(",", Integer.toString(hval), Double.toString(min), Double.toString(max));
-                outKey.set(Integer.toString(hkey));
-                outValue.set(outString);
-                context.write(outKey, outValue);
+                String outString = String.join(",", Integer.toString(hkey), Integer.toString(hval), Double.toString(min), Double.toString(max));
+                outKey.set(outString);
+                context.write(outKey, NullWritable.get());
             }
         }
     }
