@@ -24,6 +24,8 @@ For some reason, the Query 4 code ran on my machine but not Maxine's so here is 
 
 Columns: Area code, customers in that area code, min transaction on all customers in that area code, max transaction of all customers in that area code.
 
+Here is a link to a youtube video of me (Jason) running Query 4 locally to show that it does indeed run on my machine: https://youtu.be/vwDKVBML87k
+
 If you have any questions regarding running the code or if we should re-do query 4, please email us at jpdykstra@wpi.edu and mshi2@wpi.edu.
 
 Thank you!
