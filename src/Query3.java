@@ -49,7 +49,6 @@ public class Query3 {
     public static class Combiner extends Reducer<Text, Text, Text, Text>{
         private Text outKey = new Text();
         private Text outValue = new Text();
-
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             int numTransactions = 0;
             float totalSum = 0;

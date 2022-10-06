@@ -1,21 +1,15 @@
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import java.io.IOException;
 
 public class Query2 {
     /*
@@ -93,7 +87,7 @@ public class Query2 {
 
     public static class SumTransactionReducer extends Reducer<Text, Text, Text, NullWritable> {
         private Text outKey = new Text();
-        private Text outValue = new Text();
+        //private Text outValue = new Text();
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             // Important: All key-value pairs with the same key will end up in the same reducer class, so we can pass
             // info from multiple mappers with different output information to the same reducer to aggregate the data.
@@ -131,10 +125,10 @@ public class Query2 {
         }
     }
     public static void main(String[] args) throws Exception {
-        args = new String[3];
-        args[0] = "data/customers.csv";
-        args[1] = "data/transactions.csv";
-        args[2] = "data/query2output";
+//        args = new String[3];
+//        args[0] = "data/customers.csv";
+//        args[1] = "data/transactions.csv";
+//        args[2] = "data/query2output";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Query2");
         job.setJarByClass(Query2.class);

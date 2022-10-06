@@ -22,23 +22,24 @@ public class Query5 {
         //ageRange identifier
         private int ageRange(int age){
             if (age >= 10 && age < 20)
-                return 1;
+                return 0;
             else if (age >= 20 && age < 30)
-                return 2;
+                return 1;
             else if (age >= 30 && age < 40)
-                return 3;
+                return 2;
             else if (age >= 40 && age < 50)
-                return 4;
+                return 3;
             else if (age >= 50 && age < 60)
-                return 5;
+                return 4;
             else if (age >= 60 && age <= 70)
-                return 6;
-            else return 0;
+                return 5;
+            else return 6;
         }
         //customer data as a hashmap
         private HashMap<Integer, String[]> customer = new HashMap<>();
 
         //setup processes customerData
+        //Distrubuted cache utilization https://buhrmann.github.io/hadoop-distributed-cache.html
         public void setup(Context context) throws IOException, InterruptedException{
             URI[] cFiles = context.getCacheFiles();
             if (cFiles != null && cFiles.length > 0)
@@ -74,13 +75,13 @@ public class Query5 {
     public static class AgeReducer extends Reducer<Text, Text, Text, Text> {
         //age hashmap
         private HashMap<Integer, String> ageRange = new HashMap<Integer, String>() {{
-            put(0, "Error");
-            put(1, "[10, 20)");
-            put(2, "[20, 30)");
-            put(3, "[30, 40)");
-            put(4, "[40, 50)");
-            put(5, "[50, 60)");
-            put(6, "[60, 70]");
+            put(0, "[10, 20)");
+            put(1, "[20, 30)");
+            put(2, "[30, 40)");
+            put(3, "[40, 50)");
+            put(4, "[50, 60)");
+            put(5, "[60, 70]");
+            put(6, "Outside Age Range");
         }};
 
         private Text outKey = new Text();
@@ -90,7 +91,7 @@ public class Query5 {
             double min = 5555.55;
             double max = 0.0;
             double sum = 0;
-            int c = 0;
+            int x = 0;
             for (Text t : values)
             {
                 double trans = Double.parseDouble(t.toString());
@@ -98,11 +99,11 @@ public class Query5 {
                 if(min > trans) min = trans;
                 if(max < trans) max = trans;
                 sum += trans;
-                c++;
+                x++;
             }
-            double avg = sum/c;
+            double avg = sum/x;
             String[] keyV = key.toString().split(",");
-            outKey.set(ageRange.get(Integer.parseInt(keyV[0])));
+            outKey.set(ageRange.get(Integer.parseInt(keyV[0]))); //age range as outkey
             context.write(outKey, new Text(keyV[1] + "," + min + "," + max + "," + avg ));
         }
     }
@@ -115,12 +116,12 @@ public class Query5 {
 //        args[2] = "/Users/maxine/Files/cs585/CS585_Project1/data/output5.txt";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf);
-
+//      job.setCombinerClass();
         job.addCacheFile(new URI(args[0]));
         job.setJarByClass(Query5.class);
         job.setMapperClass(TransactionMapper.class);
         job.setReducerClass(AgeReducer.class);
-
+//      job.setOutputKeyClass(Text.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
